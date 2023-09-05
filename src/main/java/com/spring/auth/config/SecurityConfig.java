@@ -1,6 +1,7 @@
 package com.spring.auth.config;
 
 import com.spring.auth.service.CustomUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -20,8 +21,12 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig  {
 
-
     private CustomUserDetailsService userDetailsService;
+
+    @Autowired
+    public SecurityConfig(CustomUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     // Define a PasswordEncoder bean to handle password hashing and verification
     @Bean
@@ -38,8 +43,7 @@ public class SecurityConfig  {
                                 .requestMatchers(HttpMethod.GET, "/api/**").permitAll() // Allow GET requests to /api/ without authentication
                                 .requestMatchers("/api/auth/**").permitAll() // Allow requests to /api/auth/ without authentication
                                 .anyRequest().authenticated() // Require authentication for all other requests
-                );
-//                .csrf(csrf -> csrf.disable()); // Disable CSRF protection for RESTful API
+                ).csrf(csrf -> csrf.disable()); // Disable CSRF protection for RESTful API
         return http.build();
     }
 
